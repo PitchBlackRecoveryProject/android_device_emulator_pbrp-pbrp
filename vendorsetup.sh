@@ -1,0 +1,2 @@
+add_lunch_combo emulator_twrp-eng
+add_lunch_combo emulator_twrp-userdebug
