@@ -1,30 +1,36 @@
 version: 2.1
-jobs:
-  build:
+executors:
+  worker:
     docker:
       - image: fr3akyphantom/droid-builder:latest
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_PASSWORD
+jobs:
+  build:
+    executor: worker
     environment:
-      MANIFEST_BRANCH: 'twrp-6.0'
-      VERSION: '2.9.1'
+      MANIFEST_BRANCH: 'android-9.0'
       VENDOR: 'emulator'
       CODENAME: 'twrp'
-      BUILD_LUNCH: 'omni_twrp-userdebug'
+      FLAVOR: 'eng'
+      MAINTAINER: '@manjotsidhu'
       TEST_BUILD: 'true'
-    working_directory: /home/builder/pitchblack # '/home/builder/' will also work just fine
+      CHANGELOG: |
+        - Test on Android Emulator
+    working_directory: /home/builder/pitchblack
     steps:
-      - checkout
       - run:
           name: AIO Build
           command: |
-            echo "Set GitAuth Infos"
-            git config --global user.email $GitHubMail
-            git config --global user.name $GitHubName
-            git config --global color.ui true
-            wget -q https://raw.githubusercontent.com/PitchBlackRecoveryProject/vendor_pb/pb/build.sh
+            wget -q https://raw.githubusercontent.com/PitchBlackRecoveryProject/vendor_utils/pb/build.sh
             source build.sh
 workflows:
-  version: 2
+  version: 2.1
   build_and_test:
     jobs:
       - build:
+          filters:
+            branches:
+              only: 'android-6.0'
           context: org-global
